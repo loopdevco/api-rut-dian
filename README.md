@@ -1,4 +1,3 @@
-````markdown
 # 🌐 ConsulRut — Verificador Automatizado de NITs de la DIAN
 
 > *Una API y scraper que consulta directamente la página oficial de la DIAN cuando el sistema RUT está caído.*
