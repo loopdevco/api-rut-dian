@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Identificación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                transform: translate3d(0, -30px, 0);
+            }
+            70% {
+                transform: translate3d(0, -15px, 0);
+            }
+            90% {
+                transform: translate3d(0, -4px, 0);
+            }
+        }
+
+        /* Solo los estilos necesarios para el banner sobrio */
+        .group:hover .group-hover\\:shadow-xl {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* style para burbujas de redes */
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+                transform: translate3d(0, -30px, 0) scaleY(1.1);
+            }
+            70% {
+                animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+                transform: translate3d(0, -15px, 0) scaleY(1.05);
+            }
+            90% {
+                transform: translate3d(0,-4px,0) scaleY(.95);
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex flex-col">
+
+    <!-- Header con logo -->
+    <header class="bg-white/5 backdrop-blur-sm border-b border-white/10 py-4">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-center">
+                <!-- Espacio para logo - reemplaza "ruta-del-logo.png" con tu logo -->
+                <img src="./logo.png" alt="Logo" class="h-12 w-auto">
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 flex items-center justify-center py-9">
+        <div class="container mx-auto px-4">
+            <div class="max-w-7xl mx-auto">
+                <!-- Título principal centrado -->
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">
+                        Consulta el estado del RUT
+                    </h1>
+                    <p class="text-blue-100 text-base">
+                        Ingresa el número de identificación para obtener la información
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <!-- Panel izquierdo - Formulario -->
+                    <div>
+                        <!-- Formulario de búsqueda -->
+                        <div class="glass-effect rounded-2xl p-8">
+                            <div class="space-y-6">
+                                <div>
+                                    <label for="nit" class="block text-white font-medium mb-3">
+                                        Número de Identificación
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="nit" 
+                                        placeholder="Ej: 901234567"
+                                        class="w-full px-4 py-4 rounded-xl border-0 bg-white/20 backdrop-blur-sm text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300 text-lg"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    >
+                                </div>
+                                
+                                <button 
+                                    onclick="buscarInformacion()" 
+                                    id="searchBtn"
+                                    class="w-full bg-white hover:bg-blue-50 text-blue-600 font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-3"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    <span>Buscar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel derecho - Resultados -->
+                    <div>
+                        <!-- Loading spinner -->
+                        <div id="loading" class="hidden glass-effect rounded-2xl p-8 text-center">
+                            <div class="loading-spinner mx-auto mb-4"></div>
+                            <p class="text-blue-100">Consultando información...</p>
+                        </div>
+
+                        <!-- Resultados -->
+                        <div id="results" class="hidden glass-effect rounded-2xl p-8 fade-in">
+                            <div id="resultContent"></div>
+                        </div>
+
+                        <!-- Error -->
+                        <div id="error" class="hidden glass-effect rounded-2xl p-8 fade-in border-red-300">
+                            <div class="flex items-center space-x-3 text-red-100">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <h3 class="font-semibold">Error en la consulta</h3>
+                                    <p id="errorMessage" class="text-sm opacity-90"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mensaje inicial -->
+                        <div id="initialMessage" class="glass-effect rounded-2xl p-8 text-center">
+                            <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Listo para consultar</h3>
+                            <p class="text-blue-100">Los resultados aparecerán aquí una vez realices la búsqueda</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Banner publicitario SOBRIO pero IMPACTANTE -->
+    <div class="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 border-b border-slate-600/30 py-8 relative overflow-hidden">
+        <!-- Sutil efecto de partículas en el fondo -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-4 left-1/4 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+            <div class="absolute bottom-6 right-1/3 w-1 h-1 bg-blue-300 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+            <div class="absolute top-8 right-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0">
+                <div class="flex items-center space-x-6">
+                    <!-- Icono minimalista -->
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Mensaje profesional pero directo -->
+                    <div class="text-white">
+                        <h2 class="text-xl lg:text-2xl font-semibold mb-2 leading-tight">
+                            ¿Inviertes demasiado tiempo en conciliación bancaria?
+                        </h2>
+                        <p class="text-slate-300 text-base lg:text-lg">
+                            <span class="font-medium text-blue-300">ConciliApp</span> automatiza el proceso y reduce tu trabajo de horas a minutos.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- CTA elegante -->
+                <div class="flex flex-col items-center space-y-3">
+                    <button onclick="window.open('https://contaxes.github.io/ConciliApp/', '_blank')" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg border border-blue-500/50">
+                        ✨ Probar ConciliApp
+                    </button>
+                    <p class="text-slate-400 text-sm font-light">
+                        Sin compromiso • Prueba en 5 minutos
+                    </p>
+                </div>
+            </div>
+            
+             <!-- Línea de beneficios sutil - CENTRADA -->
+            <div class="mt-6 pt-4 border-t border-slate-600/30">
+                <div class="flex flex-wrap justify-center gap-6 text-slate-300 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                        <span>💰 Ahorra 5h/semanas</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                        <span>📊 Resultados al instante</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
+                        <span>💡 Súper fácil</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer mejorado -->
+    <footer class="bg-gray-900/90 backdrop-blur-sm text-white py-8 mt-auto">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                    <div class="flex items-center space-x-2 mb-3">
+                        <img src="./logo.png" width="150px" alt="Logo">
+                    </div>
+                    <p class="text-gray-300 leading-relaxed text-sm">
+                        Creando herramientas que mejoren el trabajo de los contadores colombianos.
+                    </p>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-3 text-sm">Soporte</h5>
+                    <div class="space-y-1 text-gray-300 text-sm">
+                        <p>📧 contaxesinfo@gmail.com</p>
+                        <p>📱 WhatsApp: +57 302 789 20 44</p>
+                        <p>🕐 Lun-Vie 8AM-6PM</p>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <h5 class="font-semibold mb-3 text-sm">Hecho con ❤️ por</h5>
+                        <p class="text-gray-300 text-sm mb-3">
+                            Contadores que entienden el dolor de los contadores.
+                        </p>
+                        <div class="flex space-x-3">
+                            <a href="https://instagram.com/contaxescol" target="_blank" class="text-pink-400 hover:text-pink-300 transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </a>
+                            <a href="https://www.tiktok.com/@contaxescol" target="_blank" class="text-white hover:text-gray-300 transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-.88-.05A6.33 6.33 0 0 0 5.16 20.5a6.33 6.33 0 0 0 10.14-5.09V8.38a8.16 8.16 0 0 0 4.65 1.46v-3.15a4.85 4.85 0 0 1-.36 0z"/>
+                                </svg>
+                            </a>
+                            <a href="https://wa.me/+573027892044" target="_blank" class="text-green-400 hover:text-green-300 transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-4 text-center text-gray-400 text-sm">
+                <p>ConTaxes © 2025 Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Burbujas flotantes de redes sociales -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col space-y-4">
+        <!-- Burbuja de WhatsApp -->
+        <a href="https://wa.me/+573027892044" target="_blank"
+            class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 bounce">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+            </svg>
+        </a>
+        
+        <!-- Burbuja de Instagram -->
+        <a href="https://instagram.com/contaxescol" target="_blank"
+            class="bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+        </a>
+
+        <!-- Burbuja de TikTok -->
+        <a href="https://www.tiktok.com/@contaxescol" target="_blank"
+            class="bg-black hover:bg-gray-800 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-.88-.05A6.33 6.33 0 0 0 5.16 20.5a6.33 6.33 0 0 0 10.14-5.09V8.38a8.16 8.16 0 0 0 4.65 1.46v-3.15a4.85 4.85 0 0 1-.36 0z"/>
+            </svg>
+        </a>
+    </div>
+
+    <script>
+
+        
+        async function buscarInformacion() {
+            const nit = document.getElementById('nit').value.trim();
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            const error = document.getElementById('error');
+            const searchBtn = document.getElementById('searchBtn');
+
+            // Validaciones
+            if (!nit) {
+                mostrarError('Por favor ingresa un número de identificación');
+                return;
+            }
+
+            if (nit.length < 6) {
+                mostrarError('El número de identificación debe tener al menos 6 dígitos');
+                return;
+            }
+
+            // Ocultar elementos previos
+            results.classList.add('hidden');
+            error.classList.add('hidden');
+            
+            // Mostrar loading
+            loading.classList.remove('hidden');
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = '<div class="loading-spinner"></div><span>Consultando...</span>';
+
+            try {
+                const API_URL = window.location.hostname.includes("localhost") 
+                    ? "http://localhost:3000/api" 
+                    : "/api";  // rutas relativas cuando esté en Render
+
+                const response = await fetch(`${API_URL}/search/${nit}`);
+                const data = await response.json();
+
+                loading.classList.add('hidden');
+                searchBtn.disabled = false;
+                searchBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span>Buscar</span>
+                `;
+
+                if (data.success) {
+                    mostrarResultados(data);
+                } else {
+                    mostrarError('No se encontró información para el número ingresado');
+                }
+
+            } catch (err) {
+                loading.classList.add('hidden');
+                searchBtn.disabled = false;
+                searchBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span>Buscar</span>
+                `;
+                mostrarError('Error de conexión. Verifica que el servidor esté funcionando.');
+            }
+        }
+
+        function mostrarResultados(data) {
+            const resultContent = document.getElementById('resultContent');
+            const results = document.getElementById('results');
+            const initialMessage = document.getElementById('initialMessage');
+            
+            // Ocultar mensaje inicial
+            initialMessage.classList.add('hidden');
+            
+            let html = `
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white">Información encontrada</h3>
+                            <p class="text-blue-100 text-sm">Consulta exitosa</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <!-- NIT y DV en la misma línea -->
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-1">
+                                    <label class="block text-blue-200 text-sm font-medium mb-1">NIT</label>
+                                    <p class="text-white font-semibold text-lg">${data.nit}</p>
+                                </div>
+                                <div class="w-20">
+                                    <label class="block text-blue-200 text-sm font-medium mb-1">DV</label>
+                                    <p class="text-white font-semibold text-lg">${data.dv}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tipo de persona -->
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <label class="block text-blue-200 text-sm font-medium mb-1">Tipo de Persona</label>
+                            <p class="text-white font-semibold capitalize">${data.data.tipo.replace('_', ' ')}</p>
+                        </div>
+            `;
+
+            if (data.data.tipo === 'persona_juridica') {
+                html += `
+                        <!-- Razón Social -->
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <label class="block text-blue-200 text-sm font-medium mb-1">Razón Social</label>
+                            <p class="text-white font-semibold">${data.data.razonSocial}</p>
+                        </div>
+                `;
+            } else if (data.data.tipo === 'persona_natural') {
+                html += `
+                        <!-- Nombres -->
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-blue-200 text-sm font-medium mb-1">Primer Nombre</label>
+                                    <p class="text-white font-semibold">${data.data.primerNombre || 'No registra'}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-blue-200 text-sm font-medium mb-1">Segundo Nombre</label>
+                                    <p class="text-white font-semibold">${data.data.segundoNombre || 'No registra'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Apellidos -->
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-blue-200 text-sm font-medium mb-1">Primer Apellido</label>
+                                    <p class="text-white font-semibold">${data.data.primerApellido || 'No registra'}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-blue-200 text-sm font-medium mb-1">Segundo Apellido</label>
+                                    <p class="text-white font-semibold">${data.data.segundoApellido || 'No registra'}</p>
+                                </div>
+                            </div>
+                        </div>
+                `;
+            }
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            resultContent.innerHTML = html;
+            results.classList.remove('hidden');
+        }
+
+        function mostrarError(mensaje) {
+            const error = document.getElementById('error');
+            const errorMessage = document.getElementById('errorMessage');
+            const initialMessage = document.getElementById('initialMessage');
+            
+            // Ocultar mensaje inicial
+            initialMessage.classList.add('hidden');
+            
+            errorMessage.textContent = mensaje;
+            error.classList.remove('hidden');
+            
+            setTimeout(() => {
+                error.classList.add('hidden');
+                initialMessage.classList.remove('hidden');
+            }, 5000);
+        }
+
+        // Permitir buscar con Enter
+        document.getElementById('nit').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarInformacion();
+            }
+        });
+    </script>
+</body>
+</html>
