@@ -40,7 +40,7 @@ Ideal para:
 
 ```bash
 git clone https://github.com/loopdevco/api-rut-dian.git
-cd consulrut
+cd api-rut-dian
 ````
 
 ### 2. Instalar dependencias
@@ -170,8 +170,8 @@ Ideas de contribución:
 ## 🤝 Soporte y Contacto
 
 ¿Problemas? ¿Sugerencias?
-📩 Contáctame: [josefermin.esp@gmail.com](mailto:loopde.co@gmail.com)
-🔗 GitHub Profile: [LoopDev](https://github.com/loopdev)
+📩 Contáctame: [loopdev.co@gmail.com](mailto:loopde.co@gmail.com)
+🔗 GitHub Profile: [LoopDev](https://github.com/loopdevco)
 
 ```
 ```
